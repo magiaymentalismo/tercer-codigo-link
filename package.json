@@ -1,0 +1,8 @@
+{
+  "name": "tercer-codigo-link",
+  "private": true,
+  "type": "module",
+  "description": "Link del espectador de Tercer Código: lleva a la Wikipedia que eligió la app del mago.",
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node test.js" }
+}
