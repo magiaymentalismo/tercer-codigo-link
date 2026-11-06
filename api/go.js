@@ -1,6 +1,6 @@
 // El link que abre el espectador ANTES del truco y deja boca abajo: una página en blanco que espera.
 // Cuando la app del mago guarda un actor nuevo (después de abierta la página), salta sola a su Wikipedia.
-// Mantiene la pantalla encendida mientras espera (si el móvil lo permite).
+// El móvil puede bloquearse boca abajo: al desbloquearlo (aunque Safari recargue la página) salta enseguida.
 // Con ?ahora va directo a lo último guardado, sin esperar.
 import { readCurrent, storeReady } from "./_store.js";
 
@@ -25,23 +25,31 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 <div>Cargando…</div>
 <script>
 (() => {
-  let since = null, done = false, lock = null;
-  async function keepAwake() {
-    try { if ("wakeLock" in navigator && !lock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => { lock = null; }); } } catch {}
+  // «since»: la hora del servidor cuando el espectador abrió la página. Se guarda en la dirección (#s=…), así
+  // sobrevive si Safari recarga la página al desbloquear el móvil. Abrir el link de nuevo (sin #) empieza de cero.
+  let since = Number((location.hash.match(/s=(\\d+)/) || [])[1]) || null;
+  if (since && Date.now() - since > 6 * 3600e3) since = null;  // de otra función (más de 6 h): empezar de nuevo
+  let done = false;
+  function remember(t) {
+    since = t;
+    try { history.replaceState(null, "", location.pathname + location.search + "#s=" + t); } catch {}
   }
   async function check() {
     if (done) return;
     try {
       const r = await fetch("/api/actual", { cache: "no-store" });
       const d = await r.json();
-      if (since === null) { since = d.now; return; }          // lo que había antes de abrir la página no cuenta
+      if (since === null) { remember(d.now); return; }        // lo que había antes de abrir la página no cuenta
       if (d.url && d.t > since) { done = true; location.replace(d.url); }
     } catch {}
   }
-  check(); keepAwake();
-  setInterval(check, 1200);
-  document.addEventListener("visibilitychange", () => { if (!document.hidden) { check(); keepAwake(); } });
-  ["touchstart", "click"].forEach(e => document.addEventListener(e, keepAwake));
+  check();
+  setInterval(check, 1000);
+  // Con el móvil bloqueado la página está dormida: al desbloquear consulta enseguida.
+  const wake = () => { if (!document.hidden) check(); };
+  document.addEventListener("visibilitychange", wake);
+  addEventListener("pageshow", wake);
+  addEventListener("focus", wake);
 })();
 </script>
 </body></html>`;
