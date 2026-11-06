@@ -1,7 +1,7 @@
 // La app del mago guarda acá la página a la que irá el espectador.
 //   POST { "clave": "...", "url": "https://es.m.wikipedia.org/wiki/..." }  → guarda
 //   GET  ?clave=...                                                    → prueba la conexión (botón «Probar»)
-import { readURL, saveURL, storeReady, isWikipedia } from "./_store.js";
+import { readCurrent, saveURL, storeReady, isWikipedia } from "./_store.js";
 
 function send(res, status, body) {
   res.statusCode = status;
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     const clave = new URL(req.url, "http://x").searchParams.get("clave");
     if (clave !== secret) return send(res, 401, { ok: false, error: "Clave incorrecta" });
-    try { return send(res, 200, { ok: true, actual: await readURL() }); }
+    try { return send(res, 200, { ok: true, actual: (await readCurrent()).url }); }
     catch (e) { return send(res, 502, { ok: false, error: "No se pudo leer la base de datos" }); }
   }
   if (req.method !== "POST") return send(res, 405, { ok: false, error: "Método no permitido" });
