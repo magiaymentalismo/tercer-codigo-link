@@ -2,7 +2,7 @@
 
 Servidor mínimo para Vercel. Cada mago lo instala **en su propia cuenta y con su dominio**: no depende de nadie.
 
-- `/` → la página que el espectador abre **antes** del truco y deja boca abajo («Cargando…»). Cuando la app guarda
+- `/` → la página que el espectador abre **antes** del truco y deja boca abajo (parece Wikipedia cargando un artículo). Cuando la app guarda
   un actor nuevo salta sola a su Wikipedia. Si el móvil se bloqueó, salta al desbloquearlo (aunque Safari recargue).
   `/?ahora` va directo a lo último guardado.
 - `/api/actual` → lo que consulta esa página cada segundo.
@@ -43,5 +43,5 @@ Antes: cuenta de **GitHub** y cuenta de **Vercel** (entrando con GitHub, plan gr
 ### Cómo se usa en la función
 El espectador escribe su fecha de nacimiento en la pantalla de código. La app busca el actor o la actriz más
 conocido nacido ese mismo día y deja tu link apuntando a su Wikipedia (tarda unos segundos; el reloj lo muestra con 🎬).
-Antes de empezar, el espectador abre `wiki.borjomeyer.com` en su móvil y lo deja boca abajo (se ve «Cargando…»).
+Antes de empezar, el espectador abre `wiki.borjomeyer.com` en su móvil y lo deja boca abajo (parece Wikipedia cargando un artículo).
 Puede bloquearse sin problema: cuando lo desbloquea, salta solo a la Wikipedia del actor guardado.

@@ -1,4 +1,4 @@
-// El link que abre el espectador ANTES del truco y deja boca abajo: una página en blanco que espera.
+// El link que abre el espectador ANTES del truco y deja boca abajo: parece Wikipedia cargando un artículo.
 // Cuando la app del mago guarda un actor nuevo (después de abierta la página), salta sola a su Wikipedia.
 // El móvil puede bloquearse boca abajo: al desbloquearlo (aunque Safari recargue la página) salta enseguida.
 // Con ?ahora va directo a lo último guardado, sin esperar.
@@ -10,19 +10,42 @@ const PAGE = `<!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101418" media="(prefers-color-scheme: dark)">
 <title>Wikipedia</title>
+<link rel="preconnect" href="https://es.m.wikipedia.org">
+<link rel="preconnect" href="https://en.m.wikipedia.org">
 <style>
-html,body{margin:0;height:100%;background:#fff}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-     font:16px -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;color:#72777d}
-.spin{width:26px;height:26px;border:3px solid #eaecf0;border-top-color:#a2a9b1;border-radius:50%;
-      animation:g 1s linear infinite}
-@keyframes g{to{transform:rotate(360deg)}}
+:root{--bg:#fff;--fg:#202122;--line:#eaecf0;--sk:#eaecf0;--sk2:#f8f9fa;--icon:#202122}
+@media (prefers-color-scheme: dark){:root{--bg:#101418;--fg:#eaecf0;--line:#27292d;--sk:#27292d;--sk2:#202326;--icon:#eaecf0}}
+html,body{margin:0;background:var(--bg);color:var(--fg);-webkit-text-size-adjust:100%}
+body{font:16px -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+header{display:flex;align-items:center;gap:14px;height:54px;padding:0 14px;border-bottom:1px solid var(--line)}
+header svg{width:22px;height:22px;flex:none}
+.mark{flex:1;line-height:1}
+.mark b{display:block;font:400 19px/1 "Linux Libertine","Georgia","Times",serif;letter-spacing:.09em}
+.mark i{display:block;font:400 10.5px/1.3 "Linux Libertine","Georgia","Times",serif;font-style:normal;letter-spacing:.02em}
+main{padding:22px 16px}
+.sk{background:linear-gradient(90deg,var(--sk) 0%,var(--sk2) 50%,var(--sk) 100%);background-size:200% 100%;
+    border-radius:3px;animation:s 1.4s ease-in-out infinite;margin-bottom:12px;height:12px}
+.sk.t{height:28px;width:62%;margin-bottom:10px}
+.sk.st{height:11px;width:38%;margin-bottom:22px}
+.sep{height:1px;background:var(--line);margin:0 0 22px}
+@keyframes s{0%{background-position:100% 0}100%{background-position:-100% 0}}
 </style>
 </head><body>
-<div class="spin"></div>
-<div>Cargando…</div>
+<header>
+  <svg viewBox="0 0 20 20" fill="var(--icon)"><rect x="1" y="3" width="18" height="2" rx="1"/><rect x="1" y="9" width="18" height="2" rx="1"/><rect x="1" y="15" width="18" height="2" rx="1"/></svg>
+  <div class="mark"><b>WIKIPEDIA</b><i id="tag">La enciclopedia libre</i></div>
+  <svg viewBox="0 0 20 20" fill="none" stroke="var(--icon)" stroke-width="2"><circle cx="8.5" cy="8.5" r="6"/><path d="M13 13l5.5 5.5" stroke-linecap="round"/></svg>
+</header>
+<main>
+  <div class="sk t"></div><div class="sk st"></div><div class="sep"></div>
+  <div class="sk" style="width:100%"></div><div class="sk" style="width:96%"></div><div class="sk" style="width:99%"></div>
+  <div class="sk" style="width:90%"></div><div class="sk" style="width:72%;margin-bottom:26px"></div>
+  <div class="sk" style="width:98%"></div><div class="sk" style="width:94%"></div><div class="sk" style="width:84%"></div>
+</main>
+<script>if (!/^es/i.test(navigator.language)) document.getElementById("tag").textContent = "The Free Encyclopedia";</script>
 <script>
 (() => {
   // «since»: la hora del servidor cuando el espectador abrió la página. Se guarda en la dirección (#s=…), así
